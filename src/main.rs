@@ -11,21 +11,19 @@ fn main() {
         .author(crate_authors!())
         .arg(Arg::with_name("from")
             .help("The file you want to copy")
-            .index(1))
+            .index(1)
+            .required(true))
         .arg(Arg::with_name("to")
             .help("The destination")
-            .index(2))
+            .index(2)
+            .required(true))
         .get_matches();
 
-    if matches.is_present("from") && matches.is_present("to") {
-        copy_to(matches.value_of("from").unwrap(), matches.value_of("to").unwrap());
-    } else {
-        println!("Wrong!");
-    }
+    copy_to(matches.value_of("from").unwrap(), matches.value_of("to").unwrap());
 }
 
 fn copy_to(from: &str, to: &str) {
-    match fs::copy(from, to) {
-        Err => Err("Operation failed")
-    };
+    if let Err(err) = fs::copy(from, to) {
+        eprintln!("operation failed: {}", err);
+    }
 }
